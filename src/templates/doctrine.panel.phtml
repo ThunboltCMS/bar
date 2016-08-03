@@ -1,0 +1,39 @@
+<h1>Doctrine tables</h1>
+
+<table>
+	<thead>
+	<tr>
+		<th>Table name</th>
+		<th>Entity name</th>
+		<th>Created</th>
+		<th>Actions</th>
+	</tr>
+	</thead>
+	<tbody>
+	<?php foreach ($tables as $hash => $row): ?>
+		<tr>
+			<td><?php echo $row['table_name'] ?></td>
+			<td><?php echo $row['name'] ?></td>
+			<td style="text-align: center;"><?php if ($row['isInstalled']) { ?>
+					<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABlElEQVQ4T6WSv2vCQBTHX0z/AAcHB13EQURBcMngkFPBwcXFFpGCFCp0LLTQQocMHRxKO3QotZQKRfo3qNETXDI6iDg4CDqIOOjkEnP1nm0gaEFrlvfu8j6f++aHAAdewoE8/EsQ/4rLYANZPVGVvQUIi0B5cvVYFfYSyJ+yLBwJNJFIQKVSAZqhuwsiHxGEk8kk6LqOgtZpay2Q3iUFDGhq51pz20uV3iSMnUqlYLFY4AgXaGfaWhB+DTNel8aStC/aFknoJSSLNpGm02mYz+cIV6tVcxYFwecgy2azUC6XgemMdC47KAk8BTA2vzeZTBCu1WqWGRT4Hn0sFouB2+2GUqm0igIEp1exc7kcDIdDXNbrdbzXu+6ZKVHgKXhYNBrFIa/XC8ViEft8Pg/9fh/7RqMBBjPI4HZgwnwfBS7FJQuiQAlZH+z3+7F2u12slFJgS0ZGysgCmwLeOO+c/O8yJUj+wKsvRMb34w3YIuALx43DIuEnc3hamG6FNwR8w35lx8fhPY89e5j9CW8V/EbftX4DtXSiEXNXroYAAAAASUVORK5CYII=">
+				<?php } else { ?>
+					<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACOElEQVQ4T6WTUUiTURTH//ebS8SSSqIFe8jYIMPFZhsoNLjTiaA9iIT0EBQRPvvkk7ANfPLJ54go6CEkxIcUxOkGCxRcbqRosJE9DFqEFZYMm/tu5zuXjZYGQfflnnvPOb97zv87n8B/LlHNV6PhKNkRmAiJx/HkSVz1MCxhIEG+mHgUt+LBgPIDGTWEiBj9/TAXF2FWVMj+NFkHKd+X0rCJRC1GqZj9STLKgMN7QXVqcJBIZcBux8/5eYY0PX/NkNLdm5z8Z0zjs5RgwPc7XdJGpTX19enKm5tRmptDhdqxjuwbGgIODthdWlpi35kXa8maBl9ve6UBI9HS26shra3Yn5lhs2VkBNjbY3t/eZlkMkPnXma5uhrAOny+1SENeu28lBridOq9UODtC8li0ssXXm1x8jGAdfEx7JKC+r0YDFZjeP+USkGRLpfi+VryiYBd6ZQNwpZwDg8DxaKGOBwozM7iSFVCbcnC3wG5LgeL2TY2Bqyu1lWA7m7sTk+zeO614vEWdvxnpY1EdI+PAysrnJxLp3l3+/0a1tOD3NQUKiRie/obQ1jEzY7TLN61iQlgYYFjtzc2WDDLZl9np4YMDGB7cpJ9nq0f+jO+bW9UnlgMoG/PwEwGFerX9+6IX8lcbZA20sXj82kIzcRmJILrO4d6kN64jKigUfZ5vchks5wcyIOTq2vdBYZUYxSN8o28qUfZWutXYB0iikoLfKhPrsVchhTUjqKfKfAeUeu+bpB+f/Ff7V//4N0RmbLLaQAAAABJRU5ErkJggg==">
+				<?php } ?>
+			</td>
+			<td>
+				<?php if ($row['isInstalled']) { ?>
+					<a href="<?php echo $this->link(['wch-doctrine-delete' => $hash]); ?>">Delete</a>
+					<a href="<?php echo $this->link(['wch-doctrine-update' => $hash]); ?>">Update</a>
+					<a href="<?php echo $this->link(['wch-doctrine-truncate']); ?>">Truncate</a>
+				<?php } else { ?>
+					<a href="<?php echo $this->link(['wch-doctrine-create' => $hash]); ?>">Create</a>
+				<?php } ?>
+			</td>
+		</tr>
+	<?php endforeach; ?>
+	</tbody>
+</table>
+<div style="text-align: right;margin-top: 5px">
+	<a href="<?php echo $this->link(['wch-doctrine-createAll' => 'yes']) ?>">Create all</a>
+	<?php if ($insert): ?>, <a href="<?php echo $this->link(['wch-doctrine-insertValues' => 'yes']) ?>">Insert values</a><?php endif; ?>
+</div>

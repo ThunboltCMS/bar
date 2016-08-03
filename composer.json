@@ -1,0 +1,10 @@
+{
+	"name": "thunbolt/bar",
+	"type": "library",
+	"autoload": {
+		"classmap": "src/"
+	},
+	"require": {
+		"tracy/tracy": "^2.3"
+	}
+}
