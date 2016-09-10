@@ -4,7 +4,7 @@ namespace Thunbolt\Bar;
 
 use Thunbolt\Console\Insert;
 use Doctrine\ORM\Tools\SchemaTool;
-use Kdyby\Doctrine\EntityManager;
+use Doctrine\ORM\EntityManager;
 use Nette\Http\Request;
 use Tracy\IBarPanel;
 
