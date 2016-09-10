@@ -4,6 +4,7 @@ namespace Thunbolt\Bar\DI;
 
 use Nette;
 use Nette\DI\CompilerExtension;
+use Doctrine\ORM\EntityManager;
 
 class BarExtension extends CompilerExtension {
 
@@ -22,11 +23,11 @@ class BarExtension extends CompilerExtension {
 		$builder = $this->getContainerBuilder();
 		$config = $this->validateConfig($this->defaults, $this->getConfig());
 
-		if ($config['enable']['temp']) {
+		if ($config['enable']['temp'] && isset($builder->parameters['tempDir'])) {
 			$builder->addDefinition($this->prefix('temp'))
 				->setClass('Thunbolt\Bar\Temp', [$builder->parameters['tempDir']]);
 		}
-		if ($config['enable']['doctrine']) {
+		if ($config['enable']['doctrine'] && class_exists(EntityManager::class)) {
 			$builder->addDefinition($this->prefix('doctrine'))
 				->setClass('Thunbolt\Bar\Doctrine');
 		}
