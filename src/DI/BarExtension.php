@@ -6,6 +6,8 @@ use Nette;
 use Nette\DI\CompilerExtension;
 use Doctrine\ORM\EntityManager;
 use Thunbolt\Bar\BarException;
+use Thunbolt\Bar\Doctrine;
+use Thunbolt\Bar\Temp;
 use Tracy\Bar;
 
 class BarExtension extends CompilerExtension {
@@ -38,11 +40,11 @@ class BarExtension extends CompilerExtension {
 				throw new BarException('Temp dir has not been set.');
 			}
 			$builder->addDefinition($this->prefix('temp'))
-				->setClass('Thunbolt\Bar\Temp', [$builder->parameters['tempDir']]);
+				->setClass(Temp::class, [$builder->parameters['tempDir']]);
 		}
 		if ($config['enable']['doctrine'] && class_exists(EntityManager::class)) {
 			$builder->addDefinition($this->prefix('doctrine'))
-				->setClass('Thunbolt\Bar\Doctrine');
+				->setClass(Doctrine::class);
 		}
 	}
 

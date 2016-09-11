@@ -21,7 +21,7 @@ class Temp extends AbstractPanel implements IBarPanel {
 		parent::__construct($request);
 		$this->tempDir = $tempDir;
 		if (!class_exists(Finder::class)) {
-			throw new BarException('Temp panel needs Nette\Utils\Finder');
+			throw new BarException('Temp panel needs ' . Finder::class);
 		}
 		if (isset($_GET['wch-log-show'])) {
 			$this->showLog($_GET['wch-log-show']);
