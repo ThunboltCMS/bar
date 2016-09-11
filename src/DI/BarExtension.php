@@ -5,6 +5,8 @@ namespace Thunbolt\Bar\DI;
 use Nette;
 use Nette\DI\CompilerExtension;
 use Doctrine\ORM\EntityManager;
+use Thunbolt\Bar\BarException;
+use Tracy\Bar;
 
 class BarExtension extends CompilerExtension {
 
@@ -16,6 +18,9 @@ class BarExtension extends CompilerExtension {
 		]
 	];
 
+	/** @var string */
+	private $tracyBarService;
+
 	/**
 	 * Processes configuration data. Intended to be overridden by descendant.
 	 */
@@ -23,7 +28,15 @@ class BarExtension extends CompilerExtension {
 		$builder = $this->getContainerBuilder();
 		$config = $this->validateConfig($this->defaults, $this->getConfig());
 
-		if ($config['enable']['temp'] && isset($builder->parameters['tempDir'])) {
+		$this->tracyBarService = $this->getContainerBuilder()->getByType(Bar::class);
+		if (!$this->tracyBarService) {
+			throw new BarException('Tracy bar not found in container.');
+		}
+
+		if ($config['enable']['temp']) {
+			if (!isset($builder->parameters['tempDir'])) {
+				throw new BarException('Temp dir has not been set.');
+			}
 			$builder->addDefinition($this->prefix('temp'))
 				->setClass('Thunbolt\Bar\Temp', [$builder->parameters['tempDir']]);
 		}
@@ -39,17 +52,17 @@ class BarExtension extends CompilerExtension {
 	 * @param Nette\PhpGenerator\ClassType $class
 	 */
 	public function afterCompile(Nette\PhpGenerator\ClassType $class) {
-		$config = $this->validateConfig($this->defaults, $this->getConfig());
-		$init = $class->methods['initialize'];
+		$builder = $this->getContainerBuilder();
+		$init = $class->getMethods()['initialize'];
 
-		if ($config['enable']['temp']) {
+		if ($builder->hasDefinition($this->prefix('temp'))) {
 			$init->addBody('if ($this->parameters["debugMode"]) $this->getService(?)->addPanel($this->getService(?));', [
-					'tracy.bar', $this->prefix('temp')
+					$this->tracyBarService, $this->prefix('temp')
 				]);
 		}
-		if ($config['enable']['doctrine']) {
+		if ($builder->hasDefinition($this->prefix('doctrine'))) {
 			$init->addBody('if ($this->parameters["debugMode"]) $this->getService(?)->addPanel($this->getService(?));', [
-					'tracy.bar', $this->prefix('doctrine')
+					$this->tracyBarService, $this->prefix('doctrine')
 				]);
 		}
 	}

@@ -20,6 +20,9 @@ class Temp extends AbstractPanel implements IBarPanel {
 	public function __construct($tempDir, Request $request) {
 		parent::__construct($request);
 		$this->tempDir = $tempDir;
+		if (!class_exists(Finder::class)) {
+			throw new BarException('Temp panel needs Nette\Utils\Finder');
+		}
 		if (isset($_GET['wch-log-show'])) {
 			$this->showLog($_GET['wch-log-show']);
 		}
@@ -65,9 +68,13 @@ class Temp extends AbstractPanel implements IBarPanel {
 	 * @return string
 	 */
 	public function getTab() {
-		$this->finder = Finder::findFiles('*.html')->in(Debugger::$logDirectory)->getIterator();
+		if (Debugger::$logDirectory) {
+			$this->finder = Finder::findFiles('*.html')->in(Debugger::$logDirectory)->getIterator();
+		} else {
+			$this->finder = [];
+		}
 		ob_start();
-		$count = iterator_count($this->finder);
+		$count = is_array($this->finder) ? count($this->finder) : iterator_count($this->finder);
 		require __DIR__ . '/templates/temp.tab.phtml';
 		return ob_get_clean();
 	}
