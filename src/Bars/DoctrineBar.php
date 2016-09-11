@@ -1,56 +1,68 @@
 <?php
 
-namespace Thunbolt\Bar;
+namespace Thunbolt\Bar\Bars;
 
-use Thunbolt\Console\Insert;
 use Doctrine\ORM\Tools\SchemaTool;
 use Doctrine\ORM\EntityManager;
 use Nette\Http\Request;
-use Tracy\IBarPanel;
 
-class Doctrine extends AbstractPanel implements IBarPanel {
+class DoctrineBar extends Bar {
 
 	/** @var EntityManager */
 	private $em;
 
-	/** @var Insert */
-	private $insert;
-
-	public function __construct(Request $request, EntityManager $em, Insert $insert = NULL) {
+	public function __construct(Request $request, EntityManager $em) {
 		parent::__construct($request);
 		$this->em = $em;
-		$this->insert = $insert;
-		if (isset($_GET['wch-doctrine-delete'])) {
-			$this->delete($_GET['wch-doctrine-delete']);
-			$this->redirect('wch-doctrine-delete');
-		}
-		if (isset($_GET['wch-doctrine-update'])) {
-			$this->update($_GET['wch-doctrine-update']);
-			$this->redirect('wch-doctrine-update');
-		}
-		if (isset($_GET['wch-doctrine-truncate'])) {
-			$this->truncate($_GET['wch-doctrine-truncate']);
-			$this->redirect('wch-doctrine-truncate');
-		}
-		if (isset($_GET['wch-doctrine-create'])) {
-			$this->create($_GET['wch-doctrine-create']);
-			$this->redirect('wch-doctrine-create');
-		}
-		if (isset($_GET['wch-doctrine-createAll'])) {
-			$this->createAll();
-			$this->redirect('wch-doctrine-createAll');
-		}
-		if (isset($_GET['wch-doctrine-insertValues'])) {
-			$this->insertValues();
-			$this->redirect('wch-doctrine-insertValues');
-		}
+
+		$this->callFunc('doctrineDelete', function ($val) {
+			$this->delete($val);
+			$this->redirectBack();
+		});
+		$this->callFunc('doctrineUpdate', function ($val) {
+			$this->update($val);
+			$this->redirectBack();
+		});
+		$this->callFunc('doctrineTruncate', function ($val) {
+			$this->truncate($val);
+			$this->redirectBack();
+		});
+		$this->callFunc('doctrineCreate', function ($val) {
+			$this->create($val);
+			$this->redirectBack();
+		});
+		$this->callFunc('doctrineCreateAll', function ($val) {
+			$this->create($val);
+			$this->redirectBack();
+		});
 	}
 
-	protected function insertValues() {
-		if ($this->insert) {
-			$this->insert->apply();
-		}
+	/************************* IBarPanel **************************/
+
+	/**
+	 * Renders HTML code for custom tab.
+	 *
+	 * @return string
+	 */
+	public function getTab() {
+		ob_start();
+		require __DIR__ . '/templates/doctrine.tab.phtml';
+		return ob_get_clean();
 	}
+
+	/**
+	 * Renders HTML code for custom panel.
+	 *
+	 * @return string
+	 */
+	public function getPanel() {
+		ob_start();
+		$tables = $this->getTables();
+		require __DIR__ . '/templates/doctrine.panel.phtml';
+		return ob_get_clean();
+	}
+
+	/////////////////////////////////////////////////////////////////
 
 	protected function createAll() {
 		$schemaTool = new SchemaTool($this->em);
@@ -109,10 +121,10 @@ class Doctrine extends AbstractPanel implements IBarPanel {
 		$connection->beginTransaction();
 
 		try {
-			$connection->query('SET FOREIGN_KEY_CHECKS=0');
+			//$connection->query('SET FOREIGN_KEY_CHECKS=0');
 			$q = $dbPlatform->getTruncateTableSql($cmd->getTableName());
 			$connection->executeUpdate($q);
-			$connection->query('SET FOREIGN_KEY_CHECKS=1');
+			//$connection->query('SET FOREIGN_KEY_CHECKS=1');
 			$connection->commit();
 		} catch (\Exception $e) {
 			$connection->rollback();
@@ -148,7 +160,6 @@ class Doctrine extends AbstractPanel implements IBarPanel {
 	}
 
 	private function getTables() {
-		$schemaTool = new SchemaTool($this->em);
 		$classes = $this->em->getMetadataFactory()->getAllMetadata();
 		$tables = $this->parseTables($classes);
 
@@ -175,32 +186,6 @@ class Doctrine extends AbstractPanel implements IBarPanel {
 		}
 
 		return $return;
-	}
-
-	/************************* IBarPanel **************************/
-
-	/**
-	 * Renders HTML code for custom tab.
-	 *
-	 * @return string
-	 */
-	public function getTab() {
-		ob_start();
-		require __DIR__ . '/templates/doctrine.tab.phtml';
-		return ob_get_clean();
-	}
-
-	/**
-	 * Renders HTML code for custom panel.
-	 *
-	 * @return string
-	 */
-	public function getPanel() {
-		ob_start();
-		$tables = $this->getTables();
-		$insert = (bool) $this->insert;
-		require __DIR__ . '/templates/doctrine.panel.phtml';
-		return ob_get_clean();
 	}
 
 }

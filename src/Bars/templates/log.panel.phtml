@@ -1,0 +1,23 @@
+<h1>Logs</h1>
+
+<div style="max-height: 400px; overflow-y: auto">
+	<table>
+		<thead>
+		<tr>
+			<th>Name</th>
+			<th>Actions</th>
+		</tr>
+		</thead>
+		<tbody>
+		<?php foreach ($logs as $row): ?>
+			<tr>
+				<td><?php echo $row->getBaseName(); ?></td>
+				<td>
+					<a href="<?php echo $this->fastLink('logDelete', $row->getBaseName()) ?>">Delete</a>
+					<a href="<?php echo $this->fastLink('logShow', $row->getBaseName()) ?>">Show</a>
+				</td>
+			</tr>
+		<?php endforeach; ?>
+		</tbody>
+	</table>
+</div>

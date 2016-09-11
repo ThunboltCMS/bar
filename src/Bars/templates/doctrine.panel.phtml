@@ -22,11 +22,11 @@
 			</td>
 			<td>
 				<?php if ($row['isInstalled']) { ?>
-					<a href="<?php echo $this->link(['wch-doctrine-delete' => $hash]); ?>">Delete</a>
-					<a href="<?php echo $this->link(['wch-doctrine-update' => $hash]); ?>">Update</a>
-					<a href="<?php echo $this->link(['wch-doctrine-truncate']); ?>">Truncate</a>
+					<a href="<?php echo $this->fastLink('doctrineDelete', $hash) ?>">Delete</a>
+					<a href="<?php echo $this->fastLink('doctrineUpdate', $hash) ?>">Update</a>
+					<a href="<?php echo $this->fastLink('doctrineTruncate', $hash) ?>">Truncate</a>
 				<?php } else { ?>
-					<a href="<?php echo $this->link(['wch-doctrine-create' => $hash]); ?>">Create</a>
+					<a href="<?php echo $this->fastLink('doctrineCreate', $hash) ?>">Create</a>
 				<?php } ?>
 			</td>
 		</tr>
@@ -34,6 +34,5 @@
 	</tbody>
 </table>
 <div style="text-align: right;margin-top: 5px">
-	<a href="<?php echo $this->link(['wch-doctrine-createAll' => 'yes']) ?>">Create all</a>
-	<?php if ($insert): ?>, <a href="<?php echo $this->link(['wch-doctrine-insertValues' => 'yes']) ?>">Insert values</a><?php endif; ?>
+	<a href="<?php echo $this->fastLink('doctrineCreateAll', 'yes') ?>">Create all</a>
 </div>

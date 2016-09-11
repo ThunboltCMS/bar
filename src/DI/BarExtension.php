@@ -6,17 +6,26 @@ use Nette;
 use Nette\DI\CompilerExtension;
 use Doctrine\ORM\EntityManager;
 use Thunbolt\Bar\BarException;
-use Thunbolt\Bar\Doctrine;
-use Thunbolt\Bar\Temp;
+use Thunbolt\Bar\Bars\DoctrineBar;
+use Thunbolt\Bar\Bars\LogBar;
+use Thunbolt\Bar\Bars\TempBar;
 use Tracy\Bar;
+use Tracy\Debugger;
 
 class BarExtension extends CompilerExtension {
 
 	/** @var array */
-	private $defaults = [
-		'enable' => [
-			'temp' => TRUE,
-			'doctrine' => TRUE
+	public $defaults = [
+		'temp' => [
+			'enable' => TRUE,
+			'tempDir' => NULL,
+		],
+		'doctrine' => [
+			'enable' => NULL,
+		],
+		'log' => [
+			'enable' => NULL,
+			'logDir' => NULL,
 		]
 	];
 
@@ -27,6 +36,7 @@ class BarExtension extends CompilerExtension {
 	 * Processes configuration data. Intended to be overridden by descendant.
 	 */
 	public function loadConfiguration() {
+		$this->processDefaults();
 		$builder = $this->getContainerBuilder();
 		$config = $this->validateConfig($this->defaults, $this->getConfig());
 
@@ -35,16 +45,29 @@ class BarExtension extends CompilerExtension {
 			throw new BarException('Tracy bar not found in container.');
 		}
 
-		if ($config['enable']['temp']) {
-			if (!isset($builder->parameters['tempDir'])) {
+		if ($config['temp']['enable']) {
+			if (!$config['temp']['tempDir']) {
 				throw new BarException('Temp dir has not been set.');
 			}
 			$builder->addDefinition($this->prefix('temp'))
-				->setClass(Temp::class, [$builder->parameters['tempDir']]);
+				->setClass(TempBar::class, [$config['temp']['tempDir']]);
 		}
-		if ($config['enable']['doctrine'] && class_exists(EntityManager::class)) {
+		if ($config['doctrine']['enable']) {
 			$builder->addDefinition($this->prefix('doctrine'))
-				->setClass(Doctrine::class);
+				->setClass(DoctrineBar::class);
+		}
+		if ($config['log']['enable']) {
+			$builder->addDefinition($this->prefix('log'))
+				->setClass(LogBar::class, [$config['log']['logDir']]);
+		}
+	}
+
+	public function processDefaults() {
+		$this->defaults['doctrine']['enable'] = class_exists(EntityManager::class);
+		$this->defaults['log']['enable'] = Debugger::$logDirectory && is_dir(Debugger::$logDirectory);
+		$this->defaults['log']['logDir'] = Debugger::$logDirectory;
+		if (isset($this->getContainerBuilder()->parameters['tempDir'])) {
+			$this->defaults['temp']['tempDir'] = $this->getContainerBuilder()->parameters['tempDir'];
 		}
 	}
 
@@ -59,13 +82,18 @@ class BarExtension extends CompilerExtension {
 
 		if ($builder->hasDefinition($this->prefix('temp'))) {
 			$init->addBody('if ($this->parameters["debugMode"]) $this->getService(?)->addPanel($this->getService(?));', [
-					$this->tracyBarService, $this->prefix('temp')
-				]);
+				$this->tracyBarService, $this->prefix('temp')
+			]);
 		}
 		if ($builder->hasDefinition($this->prefix('doctrine'))) {
 			$init->addBody('if ($this->parameters["debugMode"]) $this->getService(?)->addPanel($this->getService(?));', [
-					$this->tracyBarService, $this->prefix('doctrine')
-				]);
+				$this->tracyBarService, $this->prefix('doctrine')
+			]);
+		}
+		if ($builder->hasDefinition($this->prefix('log'))) {
+			$init->addBody('if ($this->parameters["debugMode"]) $this->getService(?)->addPanel($this->getService(?));', [
+				$this->tracyBarService, $this->prefix('log')
+			]);
 		}
 	}
 

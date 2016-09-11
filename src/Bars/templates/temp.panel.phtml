@@ -1,0 +1,36 @@
+<h1>Temp</h1>
+
+<div style="max-height: 400px; overflow-y: auto">
+	<table>
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Actions</th>
+			</tr>
+		</thead>
+		<tbody>
+			<?php foreach ($cache as $row): ?>
+				<tr>
+					<td><?php echo $row->getBaseName(); ?></td>
+					<td><a href="<?php echo $this->fastLink('cache', $row->getBaseName()) ?>">Truncate</a></td>
+				</tr>
+			<?php endforeach; ?>
+			<tr>
+				<th colspan="2">Files</th>
+			</tr>
+			<?php foreach ($files as $row): ?>
+				<tr>
+					<td><?php echo $row->getBaseName(); ?></td>
+					<td><a href="<?php echo $this->fastLink('cacheFile', $row->getBaseName()) ?>">Delete</a></td>
+				</tr>
+			<?php endforeach; ?>
+			<tr>
+				<th colspan="2">Actions</th>
+			</tr>
+				<tr>
+					<td></td>
+					<td><a href="<?php echo $this->fastLink('cacheAll', 'yes'); ?>">Truncate all</a></td>
+				</tr>
+		</tbody>
+	</table>
+</div>
