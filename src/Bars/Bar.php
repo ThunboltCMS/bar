@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Thunbolt\Bar\Bars;
 
 use Nette\Application\Application;
-use Nette\Http\Request;
+use Nette\Http\IRequest;
 use Tracy\IBarPanel;
 
 abstract class Bar implements IBarPanel {
@@ -21,7 +21,7 @@ abstract class Bar implements IBarPanel {
 	/** @var Application */
 	private $application;
 
-	public function __construct(Request $request, Application $application = NULL) {
+	public function __construct(IRequest $request, Application $application = NULL) {
 		$this->url = $request->getUrl();
 		$this->application = $application;
 	}

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Thunbolt\Bar\Bars;
 
 use Nette\Application\Application;
-use Nette\Http\Request;
+use Nette\Http\IRequest;
 use Nette\Utils\Finder;
 use Nette\Utils\Strings;
 
@@ -14,7 +14,7 @@ class LogBar extends Bar {
 	/** @var string */
 	private $logDir;
 
-	public function __construct(string $logDir, Request $request, Application $application = NULL) {
+	public function __construct(string $logDir, IRequest $request, Application $application = NULL) {
 		parent::__construct($request, $application);
 		$this->logDir = $logDir;
 

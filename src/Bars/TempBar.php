@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Thunbolt\Bar\Bars;
 
 use Nette\Application\Application;
-use Nette\Http\Request;
+use Nette\Http\IRequest;
 use Nette\Utils\Finder;
 use Thunbolt\Bar\BarException;
 use Tracy\IBarPanel;
@@ -15,7 +15,7 @@ class TempBar extends Bar implements IBarPanel {
 	/** @var string */
 	private $tempDir;
 
-	public function __construct(string $tempDir, Request $request, Application $application = NULL) {
+	public function __construct(string $tempDir, IRequest $request, Application $application = NULL) {
 		parent::__construct($request, $application);
 		$this->tempDir = $tempDir;
 		if (!class_exists(Finder::class)) {
