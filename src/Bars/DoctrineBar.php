@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Thunbolt\Bar\Bars;
 
 use Doctrine\ORM\Tools\SchemaTool;
@@ -44,7 +46,7 @@ class DoctrineBar extends Bar {
 	 *
 	 * @return string
 	 */
-	public function getTab() {
+	public function getTab(): string {
 		ob_start();
 		require __DIR__ . '/templates/doctrine.tab.phtml';
 		return ob_get_clean();
@@ -55,7 +57,7 @@ class DoctrineBar extends Bar {
 	 *
 	 * @return string
 	 */
-	public function getPanel() {
+	public function getPanel(): string {
 		ob_start();
 		$tables = $this->getTables();
 		require __DIR__ . '/templates/doctrine.panel.phtml';
@@ -64,7 +66,7 @@ class DoctrineBar extends Bar {
 
 	/////////////////////////////////////////////////////////////////
 
-	protected function createAll() {
+	protected function createAll(): void {
 		$schemaTool = new SchemaTool($this->em);
 		$classes = $this->em->getMetadataFactory()->getAllMetadata();
 		$classes = $this->getTablesForCreate($classes);
@@ -78,7 +80,7 @@ class DoctrineBar extends Bar {
 	 * @param array $classes
 	 * @return array
 	 */
-	private function getTablesForCreate($classes) {
+	private function getTablesForCreate(array $classes): array {
 		$currently = $this->em->getConnection()->getSchemaManager()->listTableNames();
 
 		$toInstall = array();
@@ -95,7 +97,7 @@ class DoctrineBar extends Bar {
 	/**
 	 * @param string $hash
 	 */
-	protected function create($hash) {
+	protected function create(string $hash): void {
 		$tables = $this->getTables();
 		if (!isset($tables[$hash]) || $tables[$hash]['isInstalled'] === TRUE) {
 			return;
@@ -109,7 +111,7 @@ class DoctrineBar extends Bar {
 	/**
 	 * @param string $hash
 	 */
-	protected function truncate($hash) {
+	protected function truncate(string $hash): void {
 		$tables = $this->getTables();
 		if (!isset($tables[$hash]) || $tables[$hash]['isInstalled'] === FALSE) {
 			return;
@@ -134,7 +136,7 @@ class DoctrineBar extends Bar {
 	/**
 	 * @param string $hash
 	 */
-	protected function update($hash) {
+	protected function update(string $hash): void {
 		$tables = $this->getTables();
 		if (!isset($tables[$hash]) || $tables[$hash]['isInstalled'] === FALSE) {
 			return;
@@ -148,7 +150,7 @@ class DoctrineBar extends Bar {
 	/**
 	 * @param string $hash
 	 */
-	protected function delete($hash) {
+	protected function delete(string $hash): void {
 		$tables = $this->getTables();
 		if (!isset($tables[$hash]) || $tables[$hash]['isInstalled'] === FALSE) {
 			return;
@@ -159,14 +161,14 @@ class DoctrineBar extends Bar {
 		$schemaTool->dropSchema([$entity]);
 	}
 
-	private function getTables() {
+	private function getTables(): array {
 		$classes = $this->em->getMetadataFactory()->getAllMetadata();
 		$tables = $this->parseTables($classes);
 
 		return $tables;
 	}
 
-	private function parseTables($classes) {
+	private function parseTables(array $classes): array {
 		$currently = $this->em->getConnection()->getSchemaManager()->listTableNames();
 		$return = [];
 		foreach ($classes as $row) {

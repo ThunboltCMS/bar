@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Thunbolt\Bar\Bars;
 
 use Nette\Application\Application;
@@ -13,21 +15,21 @@ class TempBar extends Bar implements IBarPanel {
 	/** @var string */
 	private $tempDir;
 
-	public function __construct($tempDir, Request $request, Application $application = NULL) {
+	public function __construct(string $tempDir, Request $request, Application $application = NULL) {
 		parent::__construct($request, $application);
 		$this->tempDir = $tempDir;
 		if (!class_exists(Finder::class)) {
 			throw new BarException('Temp panel needs ' . Finder::class);
 		}
 
-		$this->callFunc('cache', function ($val) {
+		$this->callFunc('cache', function (string $val) {
 			foreach (Finder::find('*')->in($this->tempDir . '/cache/' . $val) as $file) {
 				unlink((string) $file);
 			}
 
 			$this->redirectBack();
 		});
-		$this->callFunc('cacheAll', function ($val) {
+		$this->callFunc('cacheAll', function (string $val) {
 			if ($val === 'yes') {
 				foreach (Finder::findFiles('*')->in($this->tempDir . '/cache')->limitDepth(1) as $file) {
 					unlink((string) $file);
@@ -36,7 +38,7 @@ class TempBar extends Bar implements IBarPanel {
 				$this->redirectBack();
 			}
 		});
-		$this->callFunc('cacheFile', function ($val) {
+		$this->callFunc('cacheFile', function (string $val) {
 			if (is_string($val) && strpos($val, '/') === FALSE) {
 				@unlink($this->tempDir . '/cache/' . $val); // @ - may not exists
 				$this->redirectBack();
@@ -49,7 +51,7 @@ class TempBar extends Bar implements IBarPanel {
 	 *
 	 * @return string
 	 */
-	public function getTab() {
+	public function getTab(): string {
 		ob_start();
 		require __DIR__ . '/templates/temp.tab.phtml';
 		return ob_get_clean();
@@ -60,7 +62,7 @@ class TempBar extends Bar implements IBarPanel {
 	 *
 	 * @return string
 	 */
-	public function getPanel() {
+	public function getPanel(): string {
 		ob_start();
 		$cache = Finder::findDirectories('*')->in($this->tempDir . '/cache');
 		$files = Finder::findFiles('*')->in($this->tempDir . '/cache');

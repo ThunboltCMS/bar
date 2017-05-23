@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Thunbolt\Bar\Bars;
 
 use Nette\Application\Application;
@@ -12,11 +14,11 @@ class LogBar extends Bar {
 	/** @var string */
 	private $logDir;
 
-	public function __construct($logDir, Request $request, Application $application = NULL) {
+	public function __construct(string $logDir, Request $request, Application $application = NULL) {
 		parent::__construct($request, $application);
 		$this->logDir = $logDir;
 
-		$this->callFunc('logShow', function ($val) {
+		$this->callFunc('logShow', function (string $val) {
 			$file = $this->logDir . '/' . $val;
 			if (!file_exists($file)) {
 				echo '<h3>Log file not found.</h3>';
@@ -31,7 +33,7 @@ class LogBar extends Bar {
 			}
 			$this->terminate();
 		});
-		$this->callFunc('logDelete', function ($val) {
+		$this->callFunc('logDelete', function (string $val) {
 			$file = $this->logDir . '/' . $val;
 			if (file_exists($file)) {
 				unlink($file);
@@ -41,14 +43,14 @@ class LogBar extends Bar {
 		});
 	}
 
-	public function getTab() {
+	public function getTab(): string {
 		ob_start();
 		$count = count(glob($this->logDir . '/*.html'));
 		require __DIR__ . '/templates/log.tab.phtml';
 		return ob_get_clean();
 	}
 
-	public function getPanel() {
+	public function getPanel(): string {
 		ob_start();
 		$logs = Finder::findFiles(['*.html', '*.log'])->in($this->logDir);
 		require __DIR__ . '/templates/log.panel.phtml';

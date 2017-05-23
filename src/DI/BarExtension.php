@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Thunbolt\Bar\DI;
 
 use Nette;
@@ -35,7 +37,7 @@ class BarExtension extends CompilerExtension {
 	/**
 	 * Processes configuration data. Intended to be overridden by descendant.
 	 */
-	public function loadConfiguration() {
+	public function loadConfiguration(): void {
 		$this->processDefaults();
 		$builder = $this->getContainerBuilder();
 		$config = $this->validateConfig($this->defaults, $this->getConfig());
@@ -62,7 +64,7 @@ class BarExtension extends CompilerExtension {
 		}
 	}
 
-	public function processDefaults() {
+	public function processDefaults(): void {
 		$this->defaults['doctrine']['enable'] = class_exists(EntityManager::class);
 		$this->defaults['log']['enable'] = Debugger::$logDirectory && is_dir(Debugger::$logDirectory);
 		$this->defaults['log']['logDir'] = Debugger::$logDirectory;
@@ -76,7 +78,7 @@ class BarExtension extends CompilerExtension {
 	 *
 	 * @param Nette\PhpGenerator\ClassType $class
 	 */
-	public function afterCompile(Nette\PhpGenerator\ClassType $class) {
+	public function afterCompile(Nette\PhpGenerator\ClassType $class): void {
 		$builder = $this->getContainerBuilder();
 		$init = $class->getMethods()['initialize'];
 

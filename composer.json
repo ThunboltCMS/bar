@@ -5,6 +5,7 @@
 		"classmap": ["src/"]
 	},
 	"require": {
+		"php": ">=7.1",
 		"tracy/tracy": "^2.3"
 	},
 	"require-dev": {

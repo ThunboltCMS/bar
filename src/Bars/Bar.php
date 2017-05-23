@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Thunbolt\Bar\Bars;
 
 use Nette\Application\Application;
@@ -8,7 +10,7 @@ use Tracy\IBarPanel;
 
 abstract class Bar implements IBarPanel {
 
-	const PREFIX = 'wch-';
+	private const PREFIX = 'wch-';
 
 	/** @var \Nette\Http\UrlScript */
 	private $url;
@@ -24,7 +26,7 @@ abstract class Bar implements IBarPanel {
 		$this->application = $application;
 	}
 
-	protected function terminate() {
+	protected function terminate(): void {
 		if ($this->application) {
 			$this->application->onStartup = [function () {
 				exit(1);
@@ -38,7 +40,7 @@ abstract class Bar implements IBarPanel {
 	 * @param string $param
 	 * @param string|callable $func
 	 */
-	protected function callFunc($param, $func) {
+	protected function callFunc(string $param, $func): void {
 		$this->lastParam = self::PREFIX . $param;
 		if (($val = $this->url->getQueryParameter($this->lastParam)) !== NULL) {
 			$func = is_callable($func) ? $func : [$this, $func];
@@ -46,7 +48,7 @@ abstract class Bar implements IBarPanel {
 		}
 	}
 
-	protected function redirectBack() {
+	protected function redirectBack(): void {
 		header('Location: ' . $this->url->setQueryParameter($this->lastParam, NULL));
 		exit(1);
 	}
@@ -55,7 +57,7 @@ abstract class Bar implements IBarPanel {
 	 * @param array $parameters
 	 * @return string
 	 */
-	public function link(array $parameters) {
+	public function link(array $parameters): string {
 		$url = clone $this->url;
 		foreach ($parameters as $name => $value) {
 			$url->setQueryParameter($name, $value);
@@ -69,7 +71,7 @@ abstract class Bar implements IBarPanel {
 	 * @param mixed $val
 	 * @return string
 	 */
-	public function fastLink($param, $val) {
+	public function fastLink(string $param, $val): string {
 		$url = clone $this->url;
 		$url->setQueryParameter(self::PREFIX . $param, $val);
 
