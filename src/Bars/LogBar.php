@@ -35,8 +35,16 @@ class LogBar extends Bar {
 		});
 		$this->callFunc('logDelete', function (string $val) {
 			$file = $this->logDir . '/' . $val;
-			if (file_exists($file)) {
+			if (file_exists($file) && (Strings::endsWith($val, '.log') || Strings::endsWith($val, '.html'))) {
 				unlink($file);
+			}
+
+			$this->redirectBack();
+		});
+		$this->callFunc('truncateLogs', function () {
+			$files = Finder::findFiles('*.log', '*.html')->in($this->logDir);
+			foreach ($files as $file) {
+				@unlink((string) $file);
 			}
 
 			$this->redirectBack();
