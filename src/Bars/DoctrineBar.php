@@ -4,16 +4,17 @@ declare(strict_types=1);
 
 namespace Thunbolt\Bar\Bars;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\SchemaTool;
 use Doctrine\ORM\EntityManager;
 use Nette\Http\IRequest;
 
 class DoctrineBar extends Bar {
 
-	/** @var EntityManager */
+	/** @var EntityManager|EntityManagerInterface */
 	private $em;
 
-	public function __construct(IRequest $request, EntityManager $em) {
+	public function __construct(IRequest $request, EntityManagerInterface $em) {
 		parent::__construct($request);
 		$this->em = $em;
 

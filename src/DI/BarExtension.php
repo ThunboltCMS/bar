@@ -52,15 +52,15 @@ class BarExtension extends CompilerExtension {
 				throw new BarException('Temp dir has not been set.');
 			}
 			$builder->addDefinition($this->prefix('temp'))
-				->setClass(TempBar::class, [$config['temp']['tempDir']]);
+				->setFactory(TempBar::class, [$config['temp']['tempDir']]);
 		}
 		if ($config['doctrine']['enable']) {
 			$builder->addDefinition($this->prefix('doctrine'))
-				->setClass(DoctrineBar::class);
+				->setType(DoctrineBar::class);
 		}
 		if ($config['log']['enable']) {
 			$builder->addDefinition($this->prefix('log'))
-				->setClass(LogBar::class, [$config['log']['logDir']]);
+				->setFactory(LogBar::class, [$config['log']['logDir']]);
 		}
 	}
 
