@@ -34,9 +34,14 @@ class DoctrineBar extends Bar {
 			$this->create($val);
 			$this->redirectBack();
 		});
-		$this->callFunc('doctrineCreateAll', function ($val) {
-			$this->create($val);
+		$this->callFunc('doctrineUpdateAll', function () {
+			$this->updateAll();
 			$this->redirectBack();
+		});
+		$this->callFunc('doctrineDumpUpdate', function () {
+			bdump($this->getUpdateAll(), null, [
+				'truncate' => 15000,
+			]);
 		});
 	}
 
@@ -67,13 +72,25 @@ class DoctrineBar extends Bar {
 
 	/////////////////////////////////////////////////////////////////
 
-	protected function createAll(): void {
+	protected function getUpdateAll(): ?string {
 		$schemaTool = new SchemaTool($this->em);
 		$classes = $this->em->getMetadataFactory()->getAllMetadata();
 		$classes = $this->getTablesForCreate($classes);
 
 		if ($classes) {
-			$schemaTool->createSchema($classes);
+			return implode(";\n", $schemaTool->getUpdateSchemaSql($classes));
+		}
+
+		return null;
+	}
+
+	protected function updateAll(): void {
+		$schemaTool = new SchemaTool($this->em);
+		$classes = $this->em->getMetadataFactory()->getAllMetadata();
+		$classes = $this->getTablesForCreate($classes);
+
+		if ($classes) {
+			$schemaTool->updateSchema($classes);
 		}
 	}
 
