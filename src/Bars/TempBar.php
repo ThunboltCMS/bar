@@ -23,17 +23,14 @@ class TempBar extends Bar implements IBarPanel {
 		}
 
 		$this->callFunc('cache', function (string $val) {
-			foreach (Finder::find('*')->in($this->tempDir . '/cache/' . $val) as $file) {
-				unlink((string) $file);
-			}
+			$this->removeRecursiveIn($dir = $this->tempDir . '/cache/' . $val);
+			rmdir($dir);
 
 			$this->redirectBack();
 		});
 		$this->callFunc('cacheAll', function (string $val) {
 			if ($val === 'yes') {
-				foreach (Finder::findFiles('*')->in($this->tempDir . '/cache')->limitDepth(1) as $file) {
-					unlink((string) $file);
-				}
+				$this->removeRecursiveIn($this->tempDir . '/cache');
 
 				$this->redirectBack();
 			}
@@ -44,6 +41,18 @@ class TempBar extends Bar implements IBarPanel {
 				$this->redirectBack();
 			}
 		});
+	}
+
+	private function removeRecursiveIn(string $dir): void {
+		$files = new \RecursiveIteratorIterator(
+			new \RecursiveDirectoryIterator($dir, \RecursiveDirectoryIterator::SKIP_DOTS),
+			\RecursiveIteratorIterator::CHILD_FIRST
+		);
+
+		foreach ($files as $fileinfo) {
+			$todo = ($fileinfo->isDir() ? 'rmdir' : 'unlink');
+			$todo($fileinfo->getRealPath());
+		}
 	}
 
 	/**

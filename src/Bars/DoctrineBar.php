@@ -75,7 +75,6 @@ class DoctrineBar extends Bar {
 	protected function getUpdateAll(): ?string {
 		$schemaTool = new SchemaTool($this->em);
 		$classes = $this->em->getMetadataFactory()->getAllMetadata();
-		$classes = $this->getTablesForCreate($classes);
 
 		if ($classes) {
 			return implode(";\n", $schemaTool->getUpdateSchemaSql($classes));
@@ -87,7 +86,6 @@ class DoctrineBar extends Bar {
 	protected function updateAll(): void {
 		$schemaTool = new SchemaTool($this->em);
 		$classes = $this->em->getMetadataFactory()->getAllMetadata();
-		$classes = $this->getTablesForCreate($classes);
 
 		if ($classes) {
 			$schemaTool->updateSchema($classes);
