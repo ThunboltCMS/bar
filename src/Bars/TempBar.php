@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Thunbolt\Bar\Bars;
 
 use Nette\Application\Application;
+use Nette\Caching\IStorage;
+use Nette\Caching\Storages\NewMemcachedStorage;
 use Nette\Http\IRequest;
 use Nette\Utils\Finder;
 use Thunbolt\Bar\BarException;
@@ -15,9 +17,13 @@ class TempBar extends Bar implements IBarPanel {
 	/** @var string */
 	private $tempDir;
 
-	public function __construct(string $tempDir, IRequest $request, Application $application = NULL) {
+	/** @var IStorage */
+	private $storage;
+
+	public function __construct(string $tempDir, IRequest $request, IStorage $storage, Application $application = NULL) {
 		parent::__construct($request, $application);
 		$this->tempDir = $tempDir;
+		$this->storage = $storage;
 		if (!class_exists(Finder::class)) {
 			throw new BarException('Temp panel needs ' . Finder::class);
 		}
@@ -40,6 +46,16 @@ class TempBar extends Bar implements IBarPanel {
 				@unlink($this->tempDir . '/cache/' . $val); // @ - may not exists
 				$this->redirectBack();
 			}
+		});
+		$this->callFunc('proxiesDir', function () {
+			$this->removeRecursiveIn($this->tempDir . '/proxies');
+
+			$this->redirectBack();
+		});
+		$this->callFunc('flushMemcached', function () {
+			$this->storage->getConnection()->flush();
+
+			$this->redirectBack();
 		});
 	}
 
@@ -75,6 +91,9 @@ class TempBar extends Bar implements IBarPanel {
 		ob_start();
 		$cache = Finder::findDirectories('*')->in($this->tempDir . '/cache');
 		$files = Finder::findFiles('*')->in($this->tempDir . '/cache');
+		$hasProxies = is_dir($this->tempDir . '/proxies');
+		$hasMemcached = $this->storage instanceof NewMemcachedStorage;
+
 		require __DIR__ . '/templates/temp.panel.phtml';
 		return ob_get_clean();
 	}

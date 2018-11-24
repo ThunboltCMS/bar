@@ -71,7 +71,7 @@ abstract class Bar implements IBarPanel {
 	 * @param mixed $val
 	 * @return string
 	 */
-	public function fastLink(string $param, $val): string {
+	public function fastLink(string $param, $val = ''): string {
 		$url = clone $this->url;
 		$url->setQueryParameter(self::PREFIX . $param, $val);
 

@@ -25,12 +25,27 @@
 				</tr>
 			<?php endforeach; ?>
 			<tr>
+				<th colspan="2">Directories</th>
+			</tr>
+			<?php if ($hasProxies): ?>
+			<tr>
+				<td>proxies</td>
+				<td><a href="<?php echo $this->fastLink('proxiesDir'); ?>">Truncate</a></td>
+			</tr>
+			<?php endif; ?>
+			<tr>
 				<th colspan="2">Actions</th>
 			</tr>
-				<tr>
-					<td></td>
-					<td><a href="<?php echo $this->fastLink('cacheAll', 'yes'); ?>">Truncate all</a></td>
-				</tr>
+			<tr>
+				<td></td>
+				<td><a href="<?php echo $this->fastLink('cacheAll', 'yes'); ?>">Truncate all</a></td>
+			</tr>
+			<?php if ($hasMemcached): ?>
+			<tr>
+				<td></td>
+				<td><a href="<?php echo $this->fastLink('flushMemcached', 'yes'); ?>">Flush memcached</a></td>
+			</tr>
+			<?php endif; ?>
 		</tbody>
 	</table>
 </div>
