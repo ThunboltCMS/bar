@@ -49,7 +49,9 @@ abstract class Bar implements IBarPanel {
 	}
 
 	protected function redirectBack(): void {
-		header('Location: ' . $this->url->setQueryParameter($this->lastParam, NULL));
+		$query = $this->url->getQueryParameters();
+		$query[$this->lastParam] = NULL;
+		header('Location: ' . $this->url->withQuery($query));
 		exit(1);
 	}
 
