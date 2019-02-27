@@ -59,11 +59,12 @@ abstract class Bar implements IBarPanel {
 	 */
 	public function link(array $parameters): string {
 		$url = clone $this->url;
+		$query = $url->getQueryParameters();
 		foreach ($parameters as $name => $value) {
-			$url->setQueryParameter($name, $value);
+			$query[$name] = $value;
 		}
 
-		return (string) $url;
+		return (string) $url->withQuery($query);
 	}
 
 	/**
@@ -73,9 +74,10 @@ abstract class Bar implements IBarPanel {
 	 */
 	public function fastLink(string $param, $val = ''): string {
 		$url = clone $this->url;
-		$url->setQueryParameter(self::PREFIX . $param, $val);
+		$query = $url->getQueryParameters();
+		$query[self::PREFIX . $param] = $val;
 
-		return (string) $url;
+		return (string) $url->withQuery($query);
 	}
 
 }
