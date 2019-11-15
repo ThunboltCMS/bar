@@ -127,31 +127,6 @@ class DoctrineBar extends Bar {
 	/**
 	 * @param string $hash
 	 */
-	protected function truncate(string $hash): void {
-		$tables = $this->getTables();
-		if (!isset($tables[$hash]) || $tables[$hash]['isInstalled'] === FALSE) {
-			return;
-		}
-
-		$cmd = $this->em->getClassMetadata($tables[$hash]['name']);
-		$connection = $this->em->getConnection();
-		$dbPlatform = $connection->getDatabasePlatform();
-		$connection->beginTransaction();
-
-		try {
-			//$connection->query('SET FOREIGN_KEY_CHECKS=0');
-			$q = $dbPlatform->getTruncateTableSql($cmd->getTableName());
-			$connection->executeUpdate($q);
-			//$connection->query('SET FOREIGN_KEY_CHECKS=1');
-			$connection->commit();
-		} catch (\Exception $e) {
-			$connection->rollback();
-		}
-	}
-
-	/**
-	 * @param string $hash
-	 */
 	protected function update(string $hash): void {
 		$tables = $this->getTables();
 		if (!isset($tables[$hash]) || $tables[$hash]['isInstalled'] === FALSE) {
