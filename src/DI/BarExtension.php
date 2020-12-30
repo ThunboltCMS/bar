@@ -19,21 +19,6 @@ use Tracy\Debugger;
 
 class BarExtension extends CompilerExtension {
 
-	/** @var array */
-	public $defaults = [
-		'temp' => [
-			'enable' => TRUE,
-			'tempDir' => NULL,
-		],
-		'doctrine' => [
-			'enable' => NULL,
-		],
-		'log' => [
-			'enable' => NULL,
-			'logDir' => NULL,
-		]
-	];
-
 	/** @var string */
 	private $tracyBarService;
 
