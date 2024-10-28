@@ -21,7 +21,7 @@ abstract class Bar implements IBarPanel {
 	/** @var Application */
 	private $application;
 
-	public function __construct(IRequest $request, Application $application = NULL) {
+	public function __construct(IRequest $request, ?Application $application = NULL) {
 		$this->url = $request->getUrl();
 		$this->application = $application;
 	}

@@ -14,7 +14,7 @@ class LogBar extends Bar {
 	/** @var string */
 	private $logDir;
 
-	public function __construct(string $logDir, IRequest $request, Application $application = NULL) {
+	public function __construct(string $logDir, IRequest $request, ?Application $application = NULL) {
 		parent::__construct($request, $application);
 		$this->logDir = $logDir;
 

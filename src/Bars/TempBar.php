@@ -20,7 +20,7 @@ class TempBar extends Bar implements IBarPanel {
 	/** @var IStorage */
 	private $storage;
 
-	public function __construct(string $tempDir, IRequest $request, IStorage $storage, Application $application = NULL) {
+	public function __construct(string $tempDir, IRequest $request, IStorage $storage, ?Application $application = NULL) {
 		parent::__construct($request, $application);
 		$this->tempDir = $tempDir;
 		$this->storage = $storage;
