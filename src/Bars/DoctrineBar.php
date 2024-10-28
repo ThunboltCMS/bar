@@ -14,9 +14,13 @@ class DoctrineBar extends Bar {
 	/** @var EntityManager|EntityManagerInterface */
 	private $em;
 
-	public function __construct(IRequest $request, EntityManagerInterface $em) {
+	/** @var bool */
+	private $saveMode;
+
+	public function __construct(IRequest $request, EntityManagerInterface $em, bool $saveMode) {
 		parent::__construct($request);
 		$this->em = $em;
+		$this->saveMode = $saveMode;
 
 		$this->callFunc('doctrineDelete', function ($val) {
 			$this->delete($val);
@@ -77,7 +81,7 @@ class DoctrineBar extends Bar {
 		$classes = $this->em->getMetadataFactory()->getAllMetadata();
 
 		if ($classes) {
-			return implode(";\n", $schemaTool->getUpdateSchemaSql($classes));
+			return implode(";\n", $schemaTool->getUpdateSchemaSql($classes, $this->saveMode));
 		}
 
 		return null;
@@ -88,7 +92,7 @@ class DoctrineBar extends Bar {
 		$classes = $this->em->getMetadataFactory()->getAllMetadata();
 
 		if ($classes) {
-			$schemaTool->updateSchema($classes);
+			$schemaTool->updateSchema($classes, $this->saveMode);
 		}
 	}
 

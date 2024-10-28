@@ -33,6 +33,7 @@ class BarExtension extends CompilerExtension {
 			]),
 			'doctrine' => Expect::structure([
 				'enable' => Expect::bool(class_exists(EntityManagerInterface::class)),
+				'saveMode' => Expect::bool(false),
 			]),
 			'log' => Expect::structure([
 				'enable' => Expect::bool(Debugger::$logDirectory && is_dir(Debugger::$logDirectory)),
@@ -63,7 +64,7 @@ class BarExtension extends CompilerExtension {
 		}
 		if ($config->doctrine->enable) {
 			$builder->addDefinition($this->prefix('doctrine'))
-				->setType(DoctrineBar::class);
+				->setFactory(DoctrineBar::class, ['saveMode' => $config->doctrine->saveMode]);
 		}
 		if ($config->log->enable && $config->log->logDir) {
 			$builder->addDefinition($this->prefix('log'))
